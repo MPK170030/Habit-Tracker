@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                Int      @id @default(autoincrement())
+  name              String
+  email             String   @unique
+  password          String
+  warriorName       String   @default("Goku")
+  xp                Int      @default(0)
+  streak            Int      @default(0)
+  lastCompletedDate String?
+  lastActiveDate    String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  habits              Habit[]
+  dailyCompletions    DailyCompletion[]
+  xpEarnedDates       XpEarnedDate[]
+  passwordResetTokens PasswordResetToken[]
+}
+
+model Habit {
+  id               String   @id @default(uuid())
+  name             String
+  emoji            String
+  isPendingRemoval Boolean  @default(false)
+  createdAt        DateTime @default(now())
+
+  userId      Int
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  completions DailyCompletion[]
+}
+
+model DailyCompletion {
+  id      Int    @id @default(autoincrement())
+  date    String
+
+  userId  Int
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  habitId String
+  habit   Habit  @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date, habitId])
+  @@index([userId, date])
+}
+
+model XpEarnedDate {
+  id   Int    @id @default(autoincrement())
+  date String
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
