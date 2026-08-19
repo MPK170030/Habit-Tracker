@@ -10,6 +10,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      'X-Local-Date': new Date().toLocaleDateString('sv'),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },

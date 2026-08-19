@@ -2,7 +2,7 @@ import { Router, Response } from 'express';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
 import { requireAuth, AuthRequest } from '../middleware/auth';
-import { getToday, getYesterday, getCutoffDate, getLevelFromXp } from '../lib/dates';
+import { getClientDate, getPreviousDay, getCutoffDate, getLevelFromXp } from '../lib/dates';
 
 const router = Router();
 router.use(requireAuth);
@@ -12,7 +12,7 @@ router.use(requireAuth);
 // if the date has changed since the user last opened the app.
 router.post('/day-start', async (req: AuthRequest, res: Response): Promise<void> => {
   const userId = req.userId!;
-  const today  = getToday();
+  const today  = getClientDate(req);
   const cutoff = getCutoffDate(90);
 
   const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -49,7 +49,7 @@ router.post('/toggle', async (req: AuthRequest, res: Response): Promise<void> =>
 
   const userId  = req.userId!;
   const { habitId } = result.data;
-  const today   = getToday();
+  const today   = getClientDate(req);
 
   const habit = await prisma.habit.findFirst({ where: { id: habitId, userId } });
   if (!habit) {
@@ -94,7 +94,7 @@ router.post('/toggle', async (req: AuthRequest, res: Response): Promise<void> =>
 
     if (!alreadyEarned) {
       const user      = await prisma.user.findUnique({ where: { id: userId } });
-      const yesterday = getYesterday();
+      const yesterday = getPreviousDay(today);
       const newStreak = user!.lastCompletedDate === yesterday ? user!.streak + 1 : 1;
 
       xpGained       = 50 + Math.min(newStreak * 5, 50);

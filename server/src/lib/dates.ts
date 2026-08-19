@@ -2,9 +2,17 @@ export function getToday(): string {
   return new Date().toISOString().split('T')[0];
 }
 
-export function getYesterday(): string {
-  const d = new Date();
-  d.setDate(d.getDate() - 1);
+export function getClientDate(req: { headers: Record<string, string | string[] | undefined> }): string {
+  const header = req.headers['x-local-date'];
+  if (typeof header === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(header)) {
+    return header;
+  }
+  return getToday();
+}
+
+export function getPreviousDay(dateStr: string): string {
+  const d = new Date(dateStr + 'T12:00:00Z');
+  d.setUTCDate(d.getUTCDate() - 1);
   return d.toISOString().split('T')[0];
 }
 
