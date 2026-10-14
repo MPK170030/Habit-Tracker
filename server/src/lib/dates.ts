@@ -22,12 +22,14 @@ export function getCutoffDate(days: number): string {
   return d.toISOString().split('T')[0];
 }
 
+// XP thresholds per level — must mirror LEVELS[].minXp in src/types.ts
+const LEVEL_THRESHOLDS = [0, 150, 400, 800, 1500, 2500, 4000];
+
 export function getLevelFromXp(xp: number): number {
-  if (xp >= 4000) return 7;
-  if (xp >= 2500) return 6;
-  if (xp >= 1500) return 5;
-  if (xp >= 800)  return 4;
-  if (xp >= 400)  return 3;
-  if (xp >= 150)  return 2;
-  return 1;
+  let level = 1;
+  for (let i = 0; i < LEVEL_THRESHOLDS.length; i++) {
+    if (xp >= LEVEL_THRESHOLDS[i]) level = i + 1;
+    else break;
+  }
+  return level;
 }

@@ -3,17 +3,34 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { z } from 'zod';
+import rateLimit from 'express-rate-limit';
 import { prisma } from '../lib/prisma';
 import { requireAuth, AuthRequest } from '../middleware/auth';
 import { sendPasswordResetEmail } from '../lib/email';
 
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  message: { error: 'Too many login attempts. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5,
+  message: { error: 'Too many reset requests. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 const router = Router();
 
 const registerSchema = z.object({
-  name:        z.string().min(1).max(100),
-  email:       z.string().email(),
-  password:    z.string().min(8, 'Password must be at least 8 characters'),
-  warriorName: z.string().min(1).max(50).optional(),
+  name:      z.string().min(1).max(100),
+  email:     z.string().email(),
+  password:  z.string().min(8, 'Password must be at least 8 characters'),
+  diverName: z.string().min(1).max(50).optional(),
 });
 
 const loginSchema = z.object({
@@ -29,7 +46,7 @@ const safeUserSelect = {
   id:               true,
   name:             true,
   email:            true,
-  warriorName:      true,
+  diverName:        true,
   xp:               true,
   streak:           true,
   lastCompletedDate: true,
@@ -45,7 +62,7 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const { name, email, password, warriorName } = result.data;
+  const { name, email, password, diverName } = result.data;
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
@@ -55,7 +72,7 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
 
   const hash = await bcrypt.hash(password, 12);
   const user = await prisma.user.create({
-    data: { name, email, password: hash, warriorName: warriorName ?? 'Goku' },
+    data: { name, email, password: hash, diverName: diverName ?? 'Diver' },
     select: safeUserSelect,
   });
 
@@ -63,7 +80,7 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
 });
 
 // POST /api/auth/login
-router.post('/login', async (req: Request, res: Response): Promise<void> => {
+router.post('/login', loginLimiter, async (req: Request, res: Response): Promise<void> => {
   const result = loginSchema.safeParse(req.body);
   if (!result.success) {
     res.status(400).json({ error: result.error.flatten() });
@@ -83,7 +100,7 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
 });
 
 // POST /api/auth/forgot-password
-router.post('/forgot-password', async (req: Request, res: Response): Promise<void> => {
+router.post('/forgot-password', forgotPasswordLimiter, async (req: Request, res: Response): Promise<void> => {
   const schema = z.object({ email: z.string().email() });
   const result = schema.safeParse(req.body);
   if (!result.success) {

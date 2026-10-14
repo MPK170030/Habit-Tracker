@@ -13,13 +13,13 @@ model User {
   name              String
   email             String   @unique
   password          String
-  warriorName       String   @default("Goku")
-  xp                Int      @default(0)
-  streak            Int      @default(0)
-  lastCompletedDate String?
-  lastActiveDate    String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  diverName            String   @default("Diver")
+  xp                   Int      @default(0)
+  streak               Int      @default(0)
+  lastCompletedDate    String?
+  lastActiveDate       String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   habits              Habit[]
   dailyCompletions    DailyCompletion[]

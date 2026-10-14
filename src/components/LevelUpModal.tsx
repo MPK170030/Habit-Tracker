@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { LEVELS } from '../types';
-import { GokuAvatar } from './GokuAvatar';
+import { CanvasErrorBoundary } from './CanvasErrorBoundary';
+
+const OceanAvatar = lazy(() => import('./OceanAvatar'));
 
 interface Props {
   prevLevel: number;
@@ -45,47 +47,60 @@ export function LevelUpModal({ prevLevel, newLevel, onClose }: Props) {
       onClick={handleClose}
     >
       <div
-        className={`relative bg-slate-900 border-2 border-amber-400 rounded-2xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl transition-all duration-300 ${
+        className={`relative bg-slate-900 border-2 rounded-2xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl transition-all duration-300 ${
           visible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
         }`}
+        style={{ borderColor: levelData?.color }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Sparkle burst around edges */}
         <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
           {SPARKLE_POSITIONS.map((pos, i) => (
             <div
               key={i}
-              className="absolute w-2 h-2 rounded-full bg-amber-400 modal-sparkle"
-              style={{ left: pos.left, top: pos.top, animationDelay: pos.delay }}
+              className="absolute w-2 h-2 rounded-full modal-sparkle"
+              style={{ left: pos.left, top: pos.top, animationDelay: pos.delay, background: levelData?.color }}
             />
           ))}
         </div>
 
-        <div className="text-amber-400 text-xs font-black tracking-widest uppercase mb-1">
-          ⚔️ Level Up! ⚔️
+        <div className="text-xs font-black tracking-widest uppercase mb-1" style={{ color: levelData?.color }}>
+          🌊 New Depth Reached 🌊
         </div>
 
         <div className="text-6xl font-black text-white mb-1 drop-shadow-lg">
-          {prevLevel} <span className="text-amber-400">→</span> {newLevel}
+          {prevLevel} <span style={{ color: levelData?.color }}>→</span> {newLevel}
         </div>
 
-        <div className="font-black text-2xl mb-6" style={{ color: levelData?.color }}>
+        <div className="font-black text-2xl mb-1" style={{ color: levelData?.color }}>
           {levelData?.title}
         </div>
 
-        <div className="w-32 h-44 mx-auto mb-6 drop-shadow-2xl">
-          <GokuAvatar level={newLevel} />
+        <div className="text-slate-500 text-xs tracking-widest uppercase mb-5">
+          {levelData?.zone} · {levelData?.depth}
+        </div>
+
+        <div className="w-32 h-44 mx-auto mb-6">
+          <CanvasErrorBoundary fallback={
+            <div className="w-full h-full flex items-center justify-center text-6xl">🤿</div>
+          }>
+            <Suspense fallback={
+              <div className="w-full h-full flex items-center justify-center text-6xl">🤿</div>
+            }>
+              <OceanAvatar level={newLevel} />
+            </Suspense>
+          </CanvasErrorBoundary>
         </div>
 
         <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-          Your warrior grows stronger! Keep your streak alive to earn bonus XP every day.
+          You've descended deeper. Maintain your dive streak to earn bonus depth every day.
         </p>
 
         <button
           onClick={handleClose}
-          className="w-full py-3 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black font-black rounded-xl transition-colors uppercase tracking-widest text-sm"
+          className="w-full py-3 font-black rounded-xl transition-colors uppercase tracking-widest text-sm text-black"
+          style={{ background: levelData?.color }}
         >
-          Onward, Warrior →
+          Descend Further →
         </button>
       </div>
     </div>

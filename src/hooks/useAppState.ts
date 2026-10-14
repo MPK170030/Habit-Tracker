@@ -13,25 +13,25 @@ export interface AppStateVM {
   pendingRemovals: string[];
   xp: number;
   streak: number;
-  warriorName: string;
+  diverName: string;
 }
 
 export function useAppState() {
   const today = getToday();
 
-  const [loading, setLoading]               = useState(true);
-  const [xp, setXp]                         = useState(0);
-  const [streak, setStreak]                 = useState(0);
-  const [warriorName, setWarriorName]       = useState('Goku');
-  const [habits, setHabits]                 = useState<HabitEntry[]>([]);
+  const [loading, setLoading]             = useState(true);
+  const [xp, setXp]                       = useState(0);
+  const [streak, setStreak]               = useState(0);
+  const [diverName, setDiverName]         = useState('Diver');
+  const [habits, setHabits]               = useState<HabitEntry[]>([]);
   const [dailyCompletions, setDailyCompletions] = useState<Record<string, string[]>>({});
-  const [xpEarnedDates, setXpEarnedDates]   = useState<string[]>([]);
+  const [xpEarnedDates, setXpEarnedDates] = useState<string[]>([]);
 
   async function loadState() {
     const data = await api.user.state();
     setXp(data.xp);
     setStreak(data.streak);
-    setWarriorName(data.warriorName);
+    setDiverName(data.diverName);
     setHabits(data.habits.map(h => ({
       id: h.id,
       name: h.name,
@@ -57,7 +57,7 @@ export function useAppState() {
     pendingRemovals: habits.filter(h => h.isPendingRemoval).map(h => h.id),
     xp,
     streak,
-    warriorName,
+    diverName,
   };
 
   async function addHabit(name: string, emoji: string) {
@@ -128,7 +128,7 @@ export function useAppState() {
         const newLevel = getLevelInfo(newXp).current.level;
         setXp(newXp);
         setXpEarnedDates(prev => prev.includes(today) ? prev : [...prev, today]);
-        loadState().catch(() => {}); // background sync for streak + accurate server state
+        loadState().catch(() => {});
         return { leveledUp: result.leveledUp, prevLevel, newLevel, xpGained: result.xpGained };
       }
 
@@ -144,13 +144,18 @@ export function useAppState() {
     }
   }
 
-  async function updateWarriorName(name: string) {
-    const prev = warriorName;
-    setWarriorName(name);
+  async function simulateDay() {
+    await api.progress.simulateDay();
+    await Promise.all([api.progress.dayStart(), loadState()]);
+  }
+
+  async function updateDiverName(name: string) {
+    const prev = diverName;
+    setDiverName(name);
     try {
-      await api.user.updateWarriorName(name);
+      await api.user.updateDiverName(name);
     } catch {
-      setWarriorName(prev);
+      setDiverName(prev);
     }
   }
 
@@ -166,6 +171,7 @@ export function useAppState() {
     cancelRemoval,
     editHabit,
     toggleHabit,
-    updateWarriorName,
+    updateDiverName,
+    simulateDay,
   };
 }

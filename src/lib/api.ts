@@ -1,7 +1,7 @@
 const BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3001/api';
 
 function getToken(): string | null {
-  return localStorage.getItem('wh_token');
+  return localStorage.getItem('fathom_token');
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -30,7 +30,7 @@ export interface ApiUser {
   id:               number;
   name:             string;
   email:            string;
-  warriorName:      string;
+  diverName:        string;
   xp:               number;
   streak:           number;
   lastCompletedDate: string | null;
@@ -64,10 +64,10 @@ export interface ToggleResult {
 
 export const api = {
   auth: {
-    register: (name: string, email: string, password: string, warriorName?: string) =>
+    register: (name: string, email: string, password: string, diverName?: string) =>
       request<{ token: string; user: ApiUser }>('/auth/register', {
         method: 'POST',
-        body: JSON.stringify({ name, email, password, warriorName }),
+        body: JSON.stringify({ name, email, password, diverName }),
       }),
 
     login: (email: string, password: string) =>
@@ -94,10 +94,10 @@ export const api = {
   user: {
     state: () => request<ApiState>('/user/state'),
 
-    updateWarriorName: (warriorName: string) =>
-      request<{ warriorName: string }>('/user/warrior-name', {
+    updateDiverName: (diverName: string) =>
+      request<{ diverName: string }>('/user/diver-name', {
         method: 'PATCH',
-        body: JSON.stringify({ warriorName }),
+        body: JSON.stringify({ diverName }),
       }),
   },
 
@@ -130,5 +130,8 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ habitId }),
       }),
+
+    simulateDay: () =>
+      request<{ ok: boolean }>('/progress/simulate-day', { method: 'POST' }),
   },
 };

@@ -11,19 +11,19 @@ export interface AppState {
   lastCompletedDate: string | null;
   dailyCompletions: Record<string, string[]>;
   xpEarnedDates: string[];
-  warriorName: string;
-  pendingRemovals: string[]; // habit IDs to remove at next day start
+  diverName: string;
+  pendingRemovals: string[];
   lastActiveDate: string | null;
 }
 
 export const LEVELS = [
-  { level: 1, title: 'Base Form',        minXp: 0,    color: '#ea580c' },
-  { level: 2, title: 'Ultra Instinct',   minXp: 150,  color: '#94a3b8' },
-  { level: 3, title: 'Super Saiyan',     minXp: 400,  color: '#eab308' },
-  { level: 4, title: 'Super Saiyan 2',   minXp: 800,  color: '#facc15' },
-  { level: 5, title: 'Super Saiyan 3',   minXp: 1500, color: '#ca8a04' },
-  { level: 6, title: 'Super Saiyan God', minXp: 2500, color: '#e11d48' },
-  { level: 7, title: 'Super Saiyan Blue', minXp: 4000, color: '#2563eb' },
+  { level: 1, title: 'Shore Diver',   zone: 'Sunlit Zone',    depth: '0–200m',       minXp: 0,    color: '#22d3ee' },
+  { level: 2, title: 'Open Water',    zone: 'Twilight Zone',  depth: '200–1,000m',   minXp: 150,  color: '#38bdf8' },
+  { level: 3, title: 'Deep Diver',    zone: 'Midnight Zone',  depth: '1,000–4,000m', minXp: 400,  color: '#60a5fa' },
+  { level: 4, title: 'Abyssal Scout', zone: 'Abyssal Zone',   depth: '4,000–6,000m', minXp: 800,  color: '#818cf8' },
+  { level: 5, title: 'Hadal Pioneer', zone: 'Hadal Zone',     depth: '6,000–8,000m', minXp: 1500, color: '#a78bfa' },
+  { level: 6, title: 'Trench Diver',  zone: 'Mariana Trench', depth: '8,000–11,000m',minXp: 2500, color: '#c084fc' },
+  { level: 7, title: 'Abyss Master',  zone: 'The Deep',       depth: '11,000m+',     minXp: 4000, color: '#f472b6' },
 ] as const;
 
 export type LevelEntry = typeof LEVELS[number];
@@ -44,6 +44,5 @@ export function getLevelInfo(xp: number) {
 
 export const HABIT_EMOJIS = [
   '💪', '📚', '🧘', '💧', '🍎',
-  '😴', '✍️', '🧹', '🏃', '🎯',
-  '🎸', '🌿', '🧠', '🏋️', '🚴',
+  '😴', '✍️', '🏃', '🧠', '🌿',
 ];

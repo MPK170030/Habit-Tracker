@@ -49,9 +49,9 @@ router.get('/state', async (req: AuthRequest, res: Response): Promise<void> => {
   });
 });
 
-// PATCH /api/user/warrior-name
-router.patch('/warrior-name', async (req: AuthRequest, res: Response): Promise<void> => {
-  const schema = z.object({ warriorName: z.string().min(1).max(50) });
+// PATCH /api/user/diver-name
+router.patch('/diver-name', async (req: AuthRequest, res: Response): Promise<void> => {
+  const schema = z.object({ diverName: z.string().min(1).max(50) });
   const result = schema.safeParse(req.body);
   if (!result.success) {
     res.status(400).json({ error: result.error.flatten() });
@@ -60,8 +60,8 @@ router.patch('/warrior-name', async (req: AuthRequest, res: Response): Promise<v
 
   const user = await prisma.user.update({
     where:  { id: req.userId! },
-    data:   { warriorName: result.data.warriorName },
-    select: { warriorName: true },
+    data:   { diverName: result.data.diverName },
+    select: { diverName: true },
   });
   res.json(user);
 });

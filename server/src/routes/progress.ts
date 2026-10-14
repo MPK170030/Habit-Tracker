@@ -116,4 +116,31 @@ router.post('/toggle', async (req: AuthRequest, res: Response): Promise<void> =>
   res.json({ allDone, xpGained, leveledUp, checked: !existing });
 });
 
+// POST /api/progress/simulate-day — demo account only
+// Clears today's completions and rolls lastActiveDate back so day-start
+// fires again on next load, letting the recruiter earn XP a second time.
+router.post('/simulate-day', async (req: AuthRequest, res: Response): Promise<void> => {
+  const userId = req.userId!;
+
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { email: true } });
+  if (!user || user.email !== 'demo@warrior.dev') {
+    res.status(403).json({ error: 'Not available' });
+    return;
+  }
+
+  const today     = getClientDate(req);
+  const yesterday = getPreviousDay(today);
+
+  await prisma.$transaction([
+    prisma.dailyCompletion.deleteMany({ where: { userId, date: today } }),
+    prisma.xpEarnedDate.deleteMany({ where: { userId, date: today } }),
+    prisma.user.update({
+      where: { id: userId },
+      data:  { lastActiveDate: yesterday },
+    }),
+  ]);
+
+  res.json({ ok: true });
+});
+
 export default router;

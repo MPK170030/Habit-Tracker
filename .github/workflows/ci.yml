@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    name: Type check, test & build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # ── Frontend ────────────────────────────────────────────────────
+      - name: Install frontend deps
+        run: npm ci
+
+      - name: TypeScript check (frontend)
+        run: npx tsc --noEmit
+
+      - name: Build frontend
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+      # ── Backend ─────────────────────────────────────────────────────
+      - name: Install server deps
+        run: npm ci
+        working-directory: server
+
+      - name: TypeScript check (server)
+        run: npx tsc --noEmit
+        working-directory: server
+
+      - name: Run server tests
+        run: npm test
+        working-directory: server

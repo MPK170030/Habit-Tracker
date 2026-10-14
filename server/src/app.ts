@@ -19,7 +19,7 @@ app.use('/api/user',     userRouter);
 app.use('/api/habits',   habitsRouter);
 app.use('/api/progress', progressRouter);
 
-app.get('/',           (_req, res) => res.json({ name: 'Warrior Habits API', version: '1.0.0' }));
+app.get('/',           (_req, res) => res.json({ name: 'Fathom API', version: '1.0.0' }));
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
