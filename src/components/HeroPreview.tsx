@@ -134,7 +134,7 @@ export function HeroPreview() {
 
       {/* XP bar */}
       <div className="px-5 pt-5 pb-4">
-        <div className="flex justify-between text-xs text-slate-500 mb-1.5">
+        <div className="flex justify-between text-sm text-slate-500 mb-1.5">
           <span>{xp.toLocaleString()} XP</span>
           <span className="text-cyan-600">{Math.round(xpPercent)}% to Trench Diver</span>
         </div>

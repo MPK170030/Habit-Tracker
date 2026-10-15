@@ -63,7 +63,7 @@ export function LevelUpModal({ prevLevel, newLevel, onClose }: Props) {
           ))}
         </div>
 
-        <div className="text-xs font-black tracking-widest uppercase mb-1" style={{ color: levelData?.color }}>
+        <div className="text-sm font-black tracking-widest uppercase mb-1" style={{ color: levelData?.color }}>
           🌊 New Depth Reached 🌊
         </div>
 
@@ -75,7 +75,7 @@ export function LevelUpModal({ prevLevel, newLevel, onClose }: Props) {
           {levelData?.title}
         </div>
 
-        <div className="text-slate-500 text-xs tracking-widest uppercase mb-5">
+        <div className="text-slate-500 text-sm tracking-widest uppercase mb-5">
           {levelData?.zone} · {levelData?.depth}
         </div>
 

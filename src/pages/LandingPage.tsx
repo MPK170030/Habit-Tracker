@@ -65,12 +65,11 @@ function Hero({ onRegister, onTryDemo, demoLoading, demoError }: {
           <p className="text-cyan-400 text-sm font-black tracking-widest uppercase mb-5">
             Habit Tracker
           </p>
-          <h1 className="text-6xl md:text-7xl font-black text-white leading-[1.1] mb-6">
-            Descend<br />deeper<br />every day.
+          <h1 className="text-6xl md:text-6xl font-black text-white leading-[1.1] mb-6">
+            Descend deeper<br />every day.
           </h1>
           <p className="text-slate-400 text-xl leading-relaxed mb-8">
-            Complete your daily objectives. Earn XP. Build your streak.
-            Progress through 7 real ocean depth zones — from the sunlit surface to the abyss.
+            There are 7 depth zones waiting below you. Show up every day, earn XP, and fathom how deep your discipline can actually take you.
           </p>
           <div className="flex flex-wrap gap-3 mb-3">
             <button
@@ -110,17 +109,17 @@ function HowItWorks() {
     {
       icon: '🎯',
       title: 'Set your objectives',
-      body: 'Add the habits you want to build as daily dive objectives. Choose an emoji, name it, done.',
+      body: 'Name the habits you want to build, set them as dive objectives, and commit. Setup is instant — everything else is on you.',
     },
     {
       icon: '🤿',
       title: 'Complete your dive',
-      body: 'Check off every objective before midnight to log a successful day and earn your descent.',
+      body: 'Check off every objective before midnight to log a complete dive. All-or-nothing — but every clean day takes you deeper.',
     },
     {
       icon: '📈',
       title: 'Reach new depths',
-      body: 'Earn XP, maintain your streak for bonus XP, and unlock deeper ocean zones as you level up.',
+      body: 'Your streak multiplies your daily XP. Keep it alive long enough and the ocean floor gets closer.',
     },
   ];
 
@@ -128,7 +127,7 @@ function HowItWorks() {
     <section className="py-28 border-t border-slate-800/50">
       <div className="w-full px-6 lg:px-14">
         <h2 className="text-4xl font-black text-white mb-2">How it works</h2>
-        <p className="text-slate-500 text-base mb-16">Three steps. No fluff.</p>
+        <p className="text-slate-500 text-base mb-16">Three steps. No excuses.</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {steps.map((step, i) => (
             <div key={i} className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
@@ -161,8 +160,7 @@ function DepthLevels() {
               7 depth levels to unlock
             </h2>
             <p className="text-slate-400 leading-relaxed">
-              Each level is anchored to a real ocean depth zone — from the sunlit surface to the hadal
-              trenches. Consistency is the only way down.
+              Seven zones anchored to real ocean depths — from the sunlit surface to the hadal trenches at 36,000 feet. Consistency is the only way down.
             </p>
           </div>
 
@@ -206,8 +204,8 @@ function FinalCTA({ onRegister, onTryDemo, demoLoading }: {
     <section className="py-32 border-t border-slate-800/50">
       <div className="w-full px-6 lg:px-14">
         <div className="text-6xl mb-6">🌊</div>
-        <h2 className="text-5xl font-black text-white mb-4">Ready to begin?</h2>
-        <p className="text-slate-500 text-base mb-10">Your first dive starts today.</p>
+        <h2 className="text-5xl font-black text-white mb-4">Start your descent.</h2>
+        <p className="text-slate-500 text-base mb-10">No credit card. No commitment. Just depth.</p>
         <div className="flex flex-wrap gap-3">
           <button
             onClick={onRegister}

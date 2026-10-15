@@ -95,6 +95,31 @@ router.post('/login', loginLimiter, async (req: Request, res: Response): Promise
     return;
   }
 
+  if (email === 'demo@warrior.dev') {
+    const today     = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+    const [demoUser] = await prisma.$transaction([
+      prisma.user.update({
+        where:  { id: user.id },
+        data:   { xp: 250, streak: 5, lastCompletedDate: yesterday, lastActiveDate: null },
+        select: safeUserSelect,
+      }),
+      prisma.habit.deleteMany({ where: { userId: user.id } }),
+      prisma.habit.createMany({
+        data: [
+          { userId: user.id, name: 'Morning workout',     emoji: '💪' },
+          { userId: user.id, name: 'Read for 30 minutes', emoji: '📚' },
+          { userId: user.id, name: 'Drink 2L of water',   emoji: '💧' },
+        ],
+      }),
+      prisma.xpEarnedDate.deleteMany({ where: { userId: user.id, date: today } }),
+    ]);
+
+    res.json({ token: signToken(user.id), user: demoUser });
+    return;
+  }
+
   const { password: _, ...safeUser } = user;
   res.json({ token: signToken(user.id), user: safeUser });
 });
